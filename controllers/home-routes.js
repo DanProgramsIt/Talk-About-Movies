@@ -35,58 +35,59 @@ router.get("/", (req, res) => {
     });
 });
 
-
-router.get('/login', (req, res) => {
-    if (req.session.loggedIn) {
-        res.redirect('/dashboard');
-        return;
-    }
-    res.render('login');
+router.get("/login", (req, res) => {
+  if (req.session.loggedIn) {
+    res.redirect("/dashboard");
+    return;
+  }
+  res.render("login");
 });
 
-router.get('/signup', (req, res) => {
-    res.render('signup');
+router.get("/signup", (req, res) => {
+  res.render("signup");
 });
 
-router.get('/new-blog', userAuth, (req, res) => {
-    if (req.session.loggedIn) {
-        res.render('new-blog', { loggedIn: true });
-    }
+router.get("/new-blog", userAuth, (req, res) => {
+  if (req.session.loggedIn) {
+    res.render("new-blog", { loggedIn: true });
+  }
 });
 
-router.get('/blog/:id', userAuth, (req, res) => {
-    Blog.findOne({
-        where: {
-            id: req.params.id
+router.get("/blog/:id", userAuth, (req, res) => {
+  Blog.findOne({
+    where: {
+      id: req.params.id,
+    },
+    attributes: ["id", "title", "creator_id", "content", "created_at"],
+    include: [
+      {
+        model: Comment,
+        attributes: ["id", "content", "user_id", "created_at"],
+        include: {
+          model: User,
+          attributes: ["username"],
         },
-        attributes: ['id', 'title', 'creator_id', 'content', 'created_at'],
-        include: [
-            {
-                model: Comment,
-                attributes: ['id', 'content', 'user_id', 'created_at'],
-                include: {
-                    model: User,
-                    attributes: ['username']
-                }
-            },
-            {
-                model: User,
-                attributes: ['username']
-            }
-        ]
-    })
+      },
+      {
+        model: User,
+        attributes: ["username"],
+      },
+    ],
+  })
 
-    .then(blogData => {
-        if(!blogData) {
-            res.status(404).json({ message: "No specified blog post was found with that ID"});
-            return;
-        }
-        const blog = blogData.get({ plain: true });
-        res.render("single-blog", { blog, loggedIn: req.session.loggedIn });
+    .then((blogData) => {
+      if (!blogData) {
+        res
+          .status(404)
+          .json({ message: "No specified blog post was found with that ID" });
+        return;
+      }
+      const blog = blogData.get({ plain: true });
+      res.render("single-blog", { blog, loggedIn: req.session.loggedIn });
     })
     .catch((err) => {
-        console.log(err);
-        res.status(500).json(err);
+      console.log(err);
+      res.status(500).json(err);
     });
 });
 
