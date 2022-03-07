@@ -1,0 +1,20 @@
+<ol class="post-list">
+    {{#each blogs}}
+    <li>
+        <article class="post">
+            <div class="card text-center">
+                <div class='card-header'>
+                    <span class="card-title"><a href="/blog/{{id}}">{{title}}</a></span>
+                </div>
+                <div class="card-content content">
+                    <span>{{content}}</span>
+                </div>
+                <div class="card-contemt username">By: {{User.username}}</div>
+                <div class="card-footer">
+                    <a class="card-footer-item" href="/blog/{{id}}">Comments: {{Comments.length}}</a>
+                </div>
+            </div>
+        </article>
+    </li>
+    {{/each}}
+</ol>
